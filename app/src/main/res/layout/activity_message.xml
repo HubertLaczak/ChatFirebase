@@ -20,34 +20,41 @@
             android:background="@color/colorPrimaryDark"
             android:theme="@style/Base.ThemeOverlay.AppCompat.Dark.ActionBar"
             app:popupTheme="@style/MenuStyle">
+            <RelativeLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+                <de.hdodenhof.circleimageview.CircleImageView
+                    android:layout_height="30dp"
+                    android:layout_width="30dp"
+                    android:id="@+id/profile_image"/>
 
-            <de.hdodenhof.circleimageview.CircleImageView
-                android:layout_height="30dp"
-                android:layout_width="30dp"
-                android:id="@+id/profile_image"/>
+                <de.hdodenhof.circleimageview.CircleImageView
+                    android:layout_width="10dp"
+                    android:layout_height="10dp"
+                    app:civ_border_width="6dp"
+                    app:civ_border_color="@android:color/holo_green_light"
+                    android:visibility="gone"
+                    android:id="@+id/img_onBar"
+                    android:src="@mipmap/ic_launcher"
+                    android:layout_alignBottom="@+id/profile_image"
+                    android:layout_alignRight="@+id/profile_image"
 
-            <de.hdodenhof.circleimageview.CircleImageView
-                android:layout_width="10dp"
-                android:layout_height="10dp"
-                app:civ_border_width="6dp"
-                app:civ_border_color="@android:color/holo_green_light"
-                android:visibility="gone"
-                android:id="@+id/img_onBar"
-                android:src="@mipmap/ic_launcher"
-                />
+                    />
 
 
-            <de.hdodenhof.circleimageview.CircleImageView
-                android:layout_width="10dp"
-                android:layout_height="10dp"
-                app:civ_border_width="5dp"
-                app:civ_border_color="@android:color/holo_red_light"
-                android:visibility="gone"
-                android:id="@+id/img_offBar"
-                android:src="@mipmap/ic_launcher"
+                <de.hdodenhof.circleimageview.CircleImageView
+                    android:layout_width="10dp"
+                    android:layout_height="10dp"
+                    app:civ_border_width="5dp"
+                    app:civ_border_color="@android:color/holo_red_light"
+                    android:visibility="gone"
+                    android:id="@+id/img_offBar"
+                    android:src="@mipmap/ic_launcher"
+                    android:layout_alignBottom="@+id/profile_image"
+                    android:layout_alignRight="@+id/profile_image"
 
-                />
-
+                    />
+            </RelativeLayout>
 
 
             <TextView

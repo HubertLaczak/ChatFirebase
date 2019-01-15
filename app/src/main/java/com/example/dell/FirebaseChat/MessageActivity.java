@@ -10,11 +10,13 @@ import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.example.dell.FirebaseChat.Adapter.MessageAdapter;
+import com.example.dell.FirebaseChat.Adapter.UserAdapter;
 import com.example.dell.FirebaseChat.Model.Chat;
 import com.example.dell.FirebaseChat.Model.User;
 import com.example.dell.FirebaseChat.R;
@@ -48,8 +50,11 @@ public class MessageActivity extends AppCompatActivity {
 
     MessageAdapter messageAdapter;
     List<Chat> mchat;
-    RecyclerView recyclerView ;
+    RecyclerView recyclerView;
 
+
+    ImageView onBar;
+    ImageView offBar;
     @Override
 
     protected void onCreate(Bundle savedInstanceState) {
@@ -78,6 +83,9 @@ public class MessageActivity extends AppCompatActivity {
         //
         profile_image = findViewById(R.id.profile_image);
         username = findViewById(R.id.username);
+        onBar= findViewById(R.id.img_onBar);
+        offBar= findViewById(R.id.img_offBar);
+
 
         intent = getIntent();
         final String userid = intent.getStringExtra("userid");
@@ -94,6 +102,18 @@ public class MessageActivity extends AppCompatActivity {
                 } else {
                     Glide.with(MessageActivity.this).load(user.getImageURL()).into(profile_image);
                 }
+
+                //
+                if(user.getStatus().equals("online")){
+                    onBar.setVisibility(View.VISIBLE);
+                    offBar.setVisibility(View.GONE);
+                } else {
+                    onBar.setVisibility(View.GONE);
+                    offBar.setVisibility(View.VISIBLE);
+                }
+
+                //
+
 
                 readMessages(fuser.getUid(), userid, user.getImageURL()); //for showing messages
             }

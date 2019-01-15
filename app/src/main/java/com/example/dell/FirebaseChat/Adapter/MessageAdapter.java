@@ -41,11 +41,15 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
 
         public TextView show_message;
         public ImageView profil_image;
+
+        private ImageView img_on;
+        private ImageView img_off;
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
 
             show_message = itemView.findViewById(R.id.show_message);
             profil_image = itemView.findViewById(R.id.profile_image);
+
         }
     }
 

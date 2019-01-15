@@ -55,6 +55,8 @@ public class MessageActivity extends AppCompatActivity {
 
     ImageView onBar;
     ImageView offBar;
+
+    String userid;
     @Override
 
     protected void onCreate(Bundle savedInstanceState) {
@@ -88,7 +90,7 @@ public class MessageActivity extends AppCompatActivity {
 
 
         intent = getIntent();
-        final String userid = intent.getStringExtra("userid");
+        userid = intent.getStringExtra("userid");
 
         fuser = FirebaseAuth.getInstance().getCurrentUser();
         reference = FirebaseDatabase.getInstance().getReference("users").child(userid);
@@ -152,6 +154,25 @@ public class MessageActivity extends AppCompatActivity {
         hashMap.put("message", message);
 
         reference.child("Chats").push().setValue(hashMap);
+
+        //to dodałem w PART16
+        final DatabaseReference chatRef = FirebaseDatabase.getInstance().getReference("ChatList")
+                .child(fuser.getUid())
+                .child(userid);
+
+        chatRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if(!dataSnapshot.exists()){
+                    chatRef.child("id").setValue(userid);
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
     }
 
     private void readMessages(final String myid, final String userid, final String imageurl){ //for showing messages

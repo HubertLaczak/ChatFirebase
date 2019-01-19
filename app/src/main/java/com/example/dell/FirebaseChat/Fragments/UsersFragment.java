@@ -51,6 +51,7 @@ public class UsersFragment extends Fragment {
         databaseReference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                mUsers.clear();
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()){
                     User user = snapshot.getValue(User.class);
 
@@ -62,7 +63,7 @@ public class UsersFragment extends Fragment {
                 }
 
                 userAdapter = new UserAdapter(getContext(), mUsers, true);
-                //userAdapter = new UserAdapter(getContext(), mUsers, false);
+//                userAdapter = new UserAdapter(getContext(), mUsers, false);
                 recyclerView.setAdapter(userAdapter);
             }
 

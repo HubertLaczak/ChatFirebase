@@ -8,6 +8,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -31,6 +32,10 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -57,6 +62,9 @@ public class MessageActivity extends AppCompatActivity {
     ImageView offBar;
 
     String userid;
+
+
+
     @Override
 
     protected void onCreate(Bundle savedInstanceState) {
@@ -88,11 +96,11 @@ public class MessageActivity extends AppCompatActivity {
         onBar= findViewById(R.id.img_onBar);
         offBar= findViewById(R.id.img_offBar);
 
-
         intent = getIntent();
         userid = intent.getStringExtra("userid");
 
         fuser = FirebaseAuth.getInstance().getCurrentUser();
+
         reference = FirebaseDatabase.getInstance().getReference("users").child(userid);
         reference.addValueEventListener(new ValueEventListener() {
             @Override
@@ -102,7 +110,7 @@ public class MessageActivity extends AppCompatActivity {
                 if(user.getImageURL().equals("default")){
                     profile_image.setImageResource(R.mipmap.ic_launcher);
                 } else {
-                    Glide.with(MessageActivity.this).load(user.getImageURL()).into(profile_image);
+                    Glide.with(getApplicationContext()).load(user.getImageURL()).into(profile_image);
                 }
 
                 //
@@ -115,7 +123,6 @@ public class MessageActivity extends AppCompatActivity {
                 }
 
                 //
-
 
                 readMessages(fuser.getUid(), userid, user.getImageURL()); //for showing messages
             }
@@ -132,7 +139,7 @@ public class MessageActivity extends AppCompatActivity {
         btn_send.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String msg = text_send.getText().toString();
+                String msg = String.valueOf(text_send.getText().toString() + "\n" + getNowTime());
                 if(!msg.equals("")){
                     sendMessage(fuser.getUid(), userid, msg);
                 } else {
@@ -142,7 +149,10 @@ public class MessageActivity extends AppCompatActivity {
                 text_send.setText("");
             }
         });
+
+
     }
+
 
 
     private void sendMessage(String sender, String receiver, String message){
@@ -184,11 +194,12 @@ public class MessageActivity extends AppCompatActivity {
                 mchat.clear();
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()){
                     Chat chat = snapshot.getValue(Chat.class);
-                    if(chat.getReceiver().equals(myid) && chat.getSender().equals(userid) || chat.getReceiver().equals(userid) && chat.getSender().equals(myid)){
+                    if(chat.getReceiver().equals(myid) && chat.getSender().equals(userid) || chat.getReceiver().equals(userid) && chat.getSender().equals(myid)) {
                         mchat.add(chat);
                     }
-
                     messageAdapter= new MessageAdapter(MessageActivity.this, mchat, imageurl);
+
+
                     recyclerView.setAdapter(messageAdapter);
                 }
             }
@@ -220,5 +231,14 @@ public class MessageActivity extends AppCompatActivity {
     protected void onPause() {
         super.onPause();
         status("offline");
+        Glide.with(getApplicationContext()).pauseRequests();
+
+    }
+
+    private String getNowTime() {
+        DateFormat df = new SimpleDateFormat("HH:mm:ss");
+        Date now = Calendar.getInstance().getTime();
+        String text;
+        return text = df.format(now);
     }
 }

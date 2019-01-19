@@ -2,7 +2,6 @@ package com.example.dell.FirebaseChat.Fragments;
 
 import android.app.ProgressDialog;
 import android.content.ContentResolver;
-import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -12,10 +11,14 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.MimeTypeMap;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.example.dell.FirebaseChat.Adapter.UserAdapter;
 import com.example.dell.FirebaseChat.Model.User;
 import com.example.dell.FirebaseChat.R;
 import com.google.android.gms.tasks.Continuation;
@@ -34,7 +37,9 @@ import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.StorageTask;
 import com.google.firebase.storage.UploadTask;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -43,7 +48,7 @@ import static android.app.Activity.RESULT_OK;
 public class ProfileFragment extends Fragment {
 
 
-    CircleImageView image_profile;
+    CircleImageView profile_image;
     TextView username;
 
     DatabaseReference reference;
@@ -55,12 +60,32 @@ public class ProfileFragment extends Fragment {
     private StorageTask uploadTask;
 
 
+    Button btnChangeUsername;
+    EditText newUsername;
+    LinearLayout LinearLayout;
+    private String newUsernameString;
+
+    Button btn_All;
+    List<User> mUsers;
+    final List<User> finalMUsers = mUsers;
+
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_profile, container, false);
+//        getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.softInputMode.SOFT_INPUT_ADJUST_PAN);
+        mUsers = new ArrayList<>();
+        readAll();
 
-        image_profile = view.findViewById(R.id.profile_image);
+
+
+
+
+
+
+
+        profile_image = view.findViewById(R.id.profile_image);
         username = view.findViewById(R.id.username);
 
         storageReference = FirebaseStorage.getInstance().getReference("uploads");
@@ -73,9 +98,9 @@ public class ProfileFragment extends Fragment {
                 User user = dataSnapshot.getValue(User.class);
                 username.setText(user.getUsername());
                 if(user.getImageURL().equals("default")){
-                    image_profile.setImageResource(R.mipmap.ic_launcher);
-                } else {
-                    Glide.with(getContext()).load(user.getImageURL()).into(image_profile);
+                    profile_image.setImageResource(R.mipmap.ic_launcher);
+                } else if(getActivity() != null){ //https://stackoverflow.com/questions/45388325/you-cannot-start-a-load-on-a-not-yet-attached-view-or-a-fragment-where-getactivi
+                   Glide.with(getContext()).load(user.getImageURL()).into(profile_image);
                 }
             }
 
@@ -85,14 +110,128 @@ public class ProfileFragment extends Fragment {
             }
         });
 
-        image_profile.setOnClickListener(new View.OnClickListener() {
+        profile_image.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 openImage();
             }
         });
 
+        //Zmiana username
+        LinearLayout = view.findViewById(R.id.LinearLayout);
+        newUsername = view.findViewById(R.id.newUsername);
+        newUsername.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                newUsername.setTop(30);
+                newUsername.setBottom(50);
+            }
+        });
+        btnChangeUsername = view.findViewById(R.id.btnChangeUsername);
+        btnChangeUsername.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onUpdate(newUsername.getText().toString());
+                newUsername.setText("");
+            }
+        });
+
+
+        btn_All = view.findViewById(R.id.btn_All);
+        btn_All.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String messageAll = "Ostatni_raz_proba_obiecuje";
+                for(int i = 0 ; i<mUsers.size(); i++){
+//                    seeend(fuser.getUid(), mUsers.get(i).getId(), messageAll);
+                }
+            }
+        });
+
         return view;
+    }
+
+    private void readAll() {
+
+        final DatabaseReference databaseReference  = FirebaseDatabase.getInstance().getReference("users");
+        databaseReference.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                for (DataSnapshot snapshot : dataSnapshot.getChildren()){
+                    User user = snapshot.getValue(User.class);
+                    if(!user.getId().equals(fuser.getUid())){
+                        mUsers.add(user);
+                    }
+
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+    }
+
+
+//    private void readUsers(final String messageAll){
+//
+//        final DatabaseReference databaseReference  = FirebaseDatabase.getInstance().getReference("users");
+//        mUsers = new ArrayList<>();
+//        databaseReference.addValueEventListener(new ValueEventListener() {
+//            @Override
+//            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+//                for (DataSnapshot snapshot : dataSnapshot.getChildren()){
+//                    User user = snapshot.getValue(User.class);
+//                    if(!user.getId().equals(fuser.getUid())){
+//                        mUsers.add(user);
+////                        seeend(fuser.getUid(), user.getId(), messageAll);
+//                    }
+//
+//                }
+//            }
+//
+//            @Override
+//            public void onCancelled(@NonNull DatabaseError databaseError) {
+//
+//            }
+//        });
+//
+//
+//    }
+
+    private void seeend(String MyId, final String Usersid, String messageAll){
+//        Toast.makeText(getContext(), messageAll, Toast.LENGTH_SHORT).show();
+        DatabaseReference reference = FirebaseDatabase.getInstance().getReference();
+        HashMap<String,Object> hashMap = new HashMap<>();
+        hashMap.put("sender", MyId);
+        hashMap.put("receiver", Usersid);
+        hashMap.put("message", messageAll);
+
+        reference.child("Chats").push().setValue(hashMap);
+
+        final DatabaseReference chatRef = FirebaseDatabase.getInstance().getReference("ChatList")
+                .child(fuser.getUid())
+                .child(Usersid);
+
+        chatRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if(!dataSnapshot.exists()){
+                    chatRef.child("id").setValue(Usersid);
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+    }
+
+    private void onUpdate(String name) {
+        reference.getDatabase().getReference("users");
+        reference.child("username").setValue(name);
     }
 
     private void openImage() {

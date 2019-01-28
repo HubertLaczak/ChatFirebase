@@ -47,7 +47,6 @@ import static android.app.Activity.RESULT_OK;
 
 public class ProfileFragment extends Fragment {
 
-
     CircleImageView profile_image;
     TextView username;
 
@@ -61,29 +60,19 @@ public class ProfileFragment extends Fragment {
 
 
     Button btnChangeUsername;
-    EditText newUsername;
+    EditText newUsername, etMessageToAll;
     LinearLayout LinearLayout;
-    private String newUsernameString;
 
     Button btn_All;
     List<User> mUsers;
-    final List<User> finalMUsers = mUsers;
 
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_profile, container, false);
-//        getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.softInputMode.SOFT_INPUT_ADJUST_PAN);
         mUsers = new ArrayList<>();
         readAll();
-
-
-
-
-
-
-
 
         profile_image = view.findViewById(R.id.profile_image);
         username = view.findViewById(R.id.username);
@@ -141,19 +130,20 @@ public class ProfileFragment extends Fragment {
         btn_All.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String messageAll = "Ostatni_raz_proba_obiecuje";
+                String messageAll = etMessageToAll.getText().toString();
                 for(int i = 0 ; i<mUsers.size(); i++){
-//                    seeend(fuser.getUid(), mUsers.get(i).getId(), messageAll);
+                    seeend(fuser.getUid(), mUsers.get(i).getId(), messageAll);
                 }
+                etMessageToAll.setText("");
             }
         });
-
+        etMessageToAll = view.findViewById(R.id.etMessageToAll);
         return view;
     }
 
-    private void readAll() {
 
-        final DatabaseReference databaseReference  = FirebaseDatabase.getInstance().getReference("users");
+    private void readAll() {
+        DatabaseReference databaseReference  = FirebaseDatabase.getInstance().getReference("users");
         databaseReference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -165,43 +155,14 @@ public class ProfileFragment extends Fragment {
 
                 }
             }
-
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
-
             }
         });
     }
 
 
-//    private void readUsers(final String messageAll){
-//
-//        final DatabaseReference databaseReference  = FirebaseDatabase.getInstance().getReference("users");
-//        mUsers = new ArrayList<>();
-//        databaseReference.addValueEventListener(new ValueEventListener() {
-//            @Override
-//            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-//                for (DataSnapshot snapshot : dataSnapshot.getChildren()){
-//                    User user = snapshot.getValue(User.class);
-//                    if(!user.getId().equals(fuser.getUid())){
-//                        mUsers.add(user);
-////                        seeend(fuser.getUid(), user.getId(), messageAll);
-//                    }
-//
-//                }
-//            }
-//
-//            @Override
-//            public void onCancelled(@NonNull DatabaseError databaseError) {
-//
-//            }
-//        });
-//
-//
-//    }
-
     private void seeend(String MyId, final String Usersid, String messageAll){
-//        Toast.makeText(getContext(), messageAll, Toast.LENGTH_SHORT).show();
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference();
         HashMap<String,Object> hashMap = new HashMap<>();
         hashMap.put("sender", MyId);

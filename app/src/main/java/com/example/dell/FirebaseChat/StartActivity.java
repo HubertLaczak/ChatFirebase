@@ -13,7 +13,6 @@ import com.google.firebase.auth.FirebaseUser;
 public class StartActivity extends AppCompatActivity {
 
     Button login, register;
-
     FirebaseUser firebaseUser ;
 
     @Override
@@ -35,10 +34,10 @@ public class StartActivity extends AppCompatActivity {
         login = findViewById(R.id.login);
         register = findViewById(R.id.register);
     }
-
+    //autologowanie
     public void checkIfLoged(){
         firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
-        if(firebaseUser != null){ //autologowanie :)
+        if(firebaseUser != null){
             Intent intent = new Intent(StartActivity.this, MainActivity.class);
             startActivity(intent);
             finish();

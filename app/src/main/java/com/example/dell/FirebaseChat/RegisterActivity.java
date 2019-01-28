@@ -35,8 +35,13 @@ public class RegisterActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
 
-        auth = FirebaseAuth.getInstance();
+        findViewByID();
+        
 
+    }
+
+    private void findViewByID() {
+        auth = FirebaseAuth.getInstance();
         username = findViewById(R.id.username);
         email = findViewById(R.id.email);
         password = findViewById(R.id.password);
@@ -59,11 +64,9 @@ public class RegisterActivity extends AppCompatActivity {
         });
 
         Toolbar toolbar = findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
+        setSupportActionBar(toolbar);   //ustawia actionBar dla tej Activity
         getSupportActionBar().setTitle("Register");
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        
-
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true); //dodaje strzałkę przy logo
     }
 
     private void register(final String username, String email, final String password){

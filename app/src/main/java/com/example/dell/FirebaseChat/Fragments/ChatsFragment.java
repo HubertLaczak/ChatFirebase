@@ -30,7 +30,6 @@ public class ChatsFragment extends Fragment {
 
     private RecyclerView recyclerView;
     private UserAdapter userAdapter;
-//    private List<User> mUsers;
     private List<User> mUsers;
 
     FirebaseUser fuser;
@@ -44,7 +43,7 @@ public class ChatsFragment extends Fragment {
 
         recyclerView = view.findViewById(R.id.recycler_view);
         recyclerView.setHasFixedSize(true);
-        recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        recyclerView.setLayoutManager(new LinearLayoutManager(getContext())); //ustawia  lm odpowiedzialny za mierzenie i pozycjonowanie!
 
         fuser = FirebaseAuth.getInstance().getCurrentUser();
         usersList = new ArrayList<>();

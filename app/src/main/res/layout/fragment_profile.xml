@@ -77,12 +77,26 @@
                 android:id="@+id/btnChangeUsername"
                 android:layout_gravity="center"/>
             </LinearLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
 
-            <Button
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="DoWszystkich"
-                android:id="@+id/btn_All"/>
+
+                <EditText
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="5"
+                    android:hint="Write message to all.."
+                    android:id="@+id/etMessageToAll"/>
+                <Button
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:text="To all"
+                    android:id="@+id/btn_All"
+                    android:layout_weight="2"/>
+
+            </LinearLayout>
+
 
 
     </LinearLayout>

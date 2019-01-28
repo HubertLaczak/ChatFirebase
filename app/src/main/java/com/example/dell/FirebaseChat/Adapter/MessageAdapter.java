@@ -97,7 +97,6 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
             } else {
                 Glide.with(mContext).load(imageurl).into(viewHolder.profil_image);
             }
-//        }
 
         }
 
@@ -118,27 +117,6 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
             }
 
         }
-
-//    public rightItem(){
-//        reference = FirebaseDatabase.getInstance().getReference("users").child(fuser.getUid());
-//        reference.addValueEventListener(new ValueEventListener() {
-//            @Override
-//            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-//                User user = dataSnapshot.getValue(User.class);
-//                if(user.getImageURL().equals("default")){
-////                        mojObrazek = 'null";
-//                } else {
-//                     mojObrazek = user.getImageURL();
-//                }
-//            }
-//
-//            @Override
-//            public void onCancelled(@NonNull DatabaseError databaseError) {
-//
-//            }
-//        });
-//    }
-
     }
 
 

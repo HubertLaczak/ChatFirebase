@@ -52,11 +52,9 @@ public class MessageActivity extends AppCompatActivity {
     ImageButton btn_send;
     EditText text_send;
 
-
     MessageAdapter messageAdapter;
     List<Chat> mchat;
     RecyclerView recyclerView;
-
 
     ImageView onBar;
     ImageView offBar;
@@ -70,6 +68,29 @@ public class MessageActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_message);
+
+        findViewByID();
+        implementListeners();
+    }
+    //sending message
+    private void implementListeners() {
+        btn_send.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String msg = String.valueOf(text_send.getText().toString() + "\n" + getNowTime());
+                if(!msg.equals("")){
+                    sendMessage(fuser.getUid(), userid, msg);
+                } else {
+                    Toast.makeText(MessageActivity.this, "You can't send empty message ", Toast.LENGTH_SHORT).show();
+                }
+                text_send.setText("");
+            }
+        });
+    }
+
+    private void findViewByID() {
+        btn_send = findViewById(R.id.btn_send);
+        text_send = findViewById(R.id.text_send);
 
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -113,7 +134,6 @@ public class MessageActivity extends AppCompatActivity {
                     Glide.with(getApplicationContext()).load(user.getImageURL()).into(profile_image);
                 }
 
-                //
                 if(user.getStatus().equals("online")){
                     onBar.setVisibility(View.VISIBLE);
                     offBar.setVisibility(View.GONE);
@@ -123,7 +143,6 @@ public class MessageActivity extends AppCompatActivity {
                 }
 
                 //
-
                 readMessages(fuser.getUid(), userid, user.getImageURL()); //for showing messages
             }
 
@@ -132,40 +151,34 @@ public class MessageActivity extends AppCompatActivity {
 
             }
         });
-        /////Teraz do wysyłania wiadomości
-        btn_send = findViewById(R.id.btn_send);
-        text_send = findViewById(R.id.text_send);
-
-        btn_send.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                String msg = String.valueOf(text_send.getText().toString() + "\n" + getNowTime());
-                if(!msg.equals("")){
-                    sendMessage(fuser.getUid(), userid, msg);
-                } else {
-                    Toast.makeText(MessageActivity.this, "You can't send empty message ", Toast.LENGTH_SHORT).show();
-                }
-
-                text_send.setText("");
-            }
-        });
-
 
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        status("online");
+    }
+    @Override
+    protected void onPause() {
+        super.onPause();
+        status("offline");
+        Glide.with(getApplicationContext()).pauseRequests();
+
+    }
 
 
     private void sendMessage(String sender, String receiver, String message){
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference();
         HashMap<String,Object> hashMap = new HashMap<>();
-        //jeśli masz już sender i receiver, to dopisz message, nie twórz nowego Child.
+
         hashMap.put("sender", sender);
         hashMap.put("receiver", receiver);
         hashMap.put("message", message);
 
         reference.child("Chats").push().setValue(hashMap);
 
-        //to dodałem w PART16
+        //nie do końca rozumiem...
         final DatabaseReference chatRef = FirebaseDatabase.getInstance().getReference("ChatList")
                 .child(fuser.getUid())
                 .child(userid);
@@ -177,7 +190,6 @@ public class MessageActivity extends AppCompatActivity {
                     chatRef.child("id").setValue(userid);
                 }
             }
-
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
 
@@ -218,20 +230,6 @@ public class MessageActivity extends AppCompatActivity {
         HashMap<String,Object> hashMap = new HashMap<>();
         hashMap.put("status", status);
         reference.updateChildren(hashMap);
-
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        status("online");
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-        status("offline");
-        Glide.with(getApplicationContext()).pauseRequests();
 
     }
 
